@@ -1,0 +1,76 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>WS Test In JS</title> 
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<style type="text/css">
+	body {
+		font-family: Calibri;
+		font-size: 62.5%;
+	}
+	#container {
+		margin-left: 500px;
+		padding: 2px;
+		border: 2px solid black;
+		width: 405px;
+	}
+	#results {
+		border: 3px solid black;
+		width: 400px;
+		height: 200px;
+		font-size: 150%;
+		color: white;
+		background-color: green;
+	}
+	.centerX {
+		text-align: center;
+	}
+	
+	.highlight {
+	    background-color: blue;
+	    color: white;
+	}
+</style>
+<script type="text/javascript"> 
+	$(function(event) {			
+		$('button').on('click', function (e) {
+			var url = 'http://localhost:8080/OrderMgmtSystem/MyOrders';
+			var data = '<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:myor="www.myorder.com">' +
+			    '<soapenv:Header/><soapenv:Body><myor:displayAllPOs/></soapenv:Body></soapenv:Envelope>';
+			$.ajax({
+				url: url,
+				data: data,
+				type: 'post',
+				dataType: 'xml',
+	            contentType: 'text/xml; charset="utf-8"',
+				complete: function (res) {
+					xmlRes = $.parseXML (res.responseText);
+					$xmlDoc = $(xmlRes);
+					listOfAllPOs = $xmlDoc.find ('listOfPOs');
+					var pos = '[';
+					for (var ii = 0; ii < listOfAllPOs.length; ii++) {
+						if (0 == ii) {
+							pos += listOfAllPOs[ii].innerHTML;
+						}
+						else {
+							pos += (', ' + listOfAllPOs[ii].innerHTML);
+						}
+					}
+					pos += ']';
+					$('#results').html (pos);
+				}
+			});
+		});
+	});
+</script> 
+</head> 
+<body> 
+	<div id="container">
+		<h1 class="centerX">Order Management System</h1>
+		<h2 class="centerX highlight">Web Service Client in Javascript</h2>
+		<br/><br/><button>Show All POs</button> 
+		
+		<br/><h2>Results:</h2><div id="results"></div>
+	</div>
+</body> 
+</html>
